@@ -36,10 +36,12 @@ export class ProductsController {
     this.productsService.deleteById(id);
     return { success: true };
   }
+
   @Post('/')
   create(@Body() productData: CreateProductDTO) {
     return this.productsService.create(productData);
   }
+
   @Put('/:id')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
