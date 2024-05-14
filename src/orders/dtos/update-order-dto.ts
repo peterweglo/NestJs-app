@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, Length, IsUUID } from 'class-validator';
 export class UpdateOrderDTO {
   @IsNotEmpty()
   @Length(10, 20)
-  @IsUUID()
+  // @IsUUID()
   client: string;
 
   @IsNotEmpty()
