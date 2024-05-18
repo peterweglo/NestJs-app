@@ -40,44 +40,82 @@ function getOrders() {
   return [
     {
       id: 'fd105551-0f0d-4a9f-bc41-c559c8a17260',
-      client: 'John Doe',
-      address: '123 Main Street, London',
+      clientId: 'fd105551-0f0d-4a9f-bc41-c559c8a17263',
       productId: 'fd105551-0f0d-4a9f-bc41-c559c8a17256',
     },
     {
       id: 'fd105551-0f0d-4a9f-bc41-c559c8a17261',
-      client: 'Jane Doe',
-      address: '123 Main Street, London',
+      clientId: 'fd105551-0f0d-4a9f-bc41-c559c8a17265',
       productId: 'fd105551-0f0d-4a9f-bc41-c559c8a17256',
     },
     {
       id: 'fd105551-0f0d-4a9f-bc41-c559c8a17262',
-      client: 'Thomas Jefferson',
-      address: 'Baker Street 12B, New York',
+      clientId: 'fd105551-0f0d-4a9f-bc41-c559c8a17264',
       productId: '01c7599d-318b-4b9f-baf7-51f3a936a2d4',
+    },
+  ];
+}
+
+function getClients() {
+  return [
+    {
+      id: 'fd105551-0f0d-4a9f-bc41-c559c8a17263',
+      name: 'John Doe',
+      address: '123 Main Street, London',
+    },
+    {
+      id: 'fd105551-0f0d-4a9f-bc41-c559c8a17264',
+      name: 'TThomas Jefferson',
+      address: 'Baker Street 12B, New York',
+    },
+    {
+      id: 'fd105551-0f0d-4a9f-bc41-c559c8a17265',
+      name: 'Jane Doe',
+      address: 'Baker Street 12B, Philadelphia',
     },
   ];
 }
 
 async function seed() {
   await Promise.all(
-    getProducts().map((product) => {
-      return db.product.create({ data: product });
+    getProducts().map(async (product) => {
+      try {
+        await db.product.upsert({
+          where: { id: product.id },
+          update: product,
+          create: product,
+        });
+      } catch (error) {
+        console.error('Error', error);
+      }
     }),
   );
 
   await Promise.all(
-    getOrders().map(({ productId, ...orderData }) => {
-      return db.order.create({
-        data: {
-          ...orderData,
-          product: {
-            connect: { id: productId },
-          },
-        },
-      });
+    getOrders().map(async (order) => {
+      try {
+        await db.order.upsert({
+          where: { id: order.id },
+          update: order,
+          create: order,
+        });
+      } catch (error) {
+        console.error('Error', error);
+      }
+    }),
+  );
+  await Promise.all(
+    getClients().map(async (client) => {
+      try {
+        await db.client.upsert({
+          where: { id: client.id },
+          update: client,
+          create: client,
+        });
+      } catch (error) {
+        console.error('Error', error);
+      }
     }),
   );
 }
-
 seed();
